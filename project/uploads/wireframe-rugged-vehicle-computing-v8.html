@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rugged Vehicle Computing | Advantech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* ==== Grayscale tokens (still wireframe-level visual, no brand color) ==== */
+  :root {
+    --wf-bg: #ffffff;
+    --wf-surface: #ffffff;
+    --wf-surface-alt: #f5f5f5;
+    --wf-surface-dark: #e8e8e8;
+    --wf-border: #ddd;
+    --wf-border-strong: #bbb;
+    --wf-text: #1a1a1a;
+    --wf-text-muted: #666;
+    --wf-text-light: #999;
+    --wf-img-a: #e8e8e8;
+    --wf-img-b: #f5f5f5;
+    --wf-dark: #1a1a1a;
+    --wf-nav-dark: #2a2a2a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Heebo", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "Helvetica Neue", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: var(--wf-bg);
+    color: var(--wf-text);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  a { color: inherit; text-decoration: none; }
+  img, .wf-img { display: block; }
+
+  /* ====================================================================
+     ADVANTECH HEADER — based on advantech.com structure
+     ==================================================================== */
+
+  /* Utility bar (top thin bar) */
+  .adv-util-bar {
+    background: #f0f0f0;
+    border-bottom: 1px solid var(--wf-border);
+    font-size: 11px;
+    color: var(--wf-text-muted);
+  }
+  .adv-util-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    align-items: center;
+  }
+  .adv-util-inner a:hover { color: var(--wf-text); }
+
+  /* Main header bar */
+  .adv-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--wf-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .adv-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .adv-logo {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .adv-logo::before {
+    content: "";
+    width: 32px;
+    height: 32px;
+    background: #1a1a1a;
+    display: inline-block;
+    border-radius: 2px;
+  }
+
+  /* Main nav */
+  .adv-nav {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+  }
+  .adv-nav a {
+    padding: 8px 0;
+    color: #1a1a1a;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .adv-nav a:hover { border-bottom-color: #1a1a1a; }
+  .adv-nav a.active { border-bottom-color: #1a1a1a; font-weight: 700; }
+
+  .adv-header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .adv-header-actions .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--wf-text-muted);
+    font-size: 14px;
+  }
+
+  /* Breadcrumb */
+  .adv-breadcrumb {
+    background: #fafafa;
+    border-bottom: 1px solid var(--wf-border);
+    font-size: 12px;
+    color: var(--wf-text-muted);
+  }
+  .adv-breadcrumb-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 24px;
+  }
+  .adv-breadcrumb a:hover { color: var(--wf-text); text-decoration: underline; }
+  .adv-breadcrumb .sep { margin: 0 8px; color: var(--wf-text-light); }
+  .adv-breadcrumb .current { color: var(--wf-text); font-weight: 500; }
+
+  /* ====================================================================
+     MAIN CONTENT LAYOUT
+     ==================================================================== */
+  main { background: var(--wf-bg); }
+  .section {
+    padding: 72px 0;
+  }
+  .section.alt { background: var(--wf-surface-alt); }
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Common typography inside sections */
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--wf-text-muted);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--wf-text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .section-lead {
+    font-size: 16px;
+    color: #444;
+    max-width: 780px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  /* Placeholders */
+  .wf-img {
+    background: repeating-linear-gradient(45deg, var(--wf-img-a),
+                var(--wf-img-a) 8px, var(--wf-img-b) 8px, var(--wf-img-b) 16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    min-height: 100px;
+    border: 1px solid var(--wf-border);
+    text-align: center;
+    padding: 8px;
+  }
+  .wf-img.tall { min-height: 200px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border: 1px solid #333;
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 2px;
+    margin-right: 10px;
+    margin-top: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: #333; color: #fff; }
+  .btn.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .btn.primary:hover { background: #333; border-color: #333; }
+  .btn.large { padding: 16px 36px; font-size: 15px; }
+
+  /* ====================================================================
+     ZONE 1 · HERO — KV Banner rotator
+     ==================================================================== */
+  .hero {
+    position: relative;
+    background: #1a1a1a;
+    overflow: hidden;
+  }
+  .hero-wrap { position: relative; min-height: 520px; }
+  .hero-frame {
+    display: none;
+    min-height: 520px;
+    padding: 80px 0 120px;
+    background: repeating-linear-gradient(135deg, #2a2a2a, #2a2a2a 14px, #333 14px, #333 28px);
+    position: relative;
+    color: #fff;
+  }
+  .hero-frame.active { display: block; }
+  .hero-frame::after {
+    content: "▶ Cinematic video loop · Scenario footage";
+    position: absolute;
+    bottom: 100px;
+    right: 40px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+  }
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+  .hero-headline {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 22px;
+    max-width: 800px;
+    letter-spacing: -0.5px;
+  }
+  .hero-lead {
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 680px;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 4px;
+  }
+  .hero .btn {
+    border-color: #fff;
+    color: #fff;
+    background: transparent;
+  }
+  .hero .btn:hover { background: #fff; color: #1a1a1a; }
+  .hero .btn.primary { background: #fff; color: #1a1a1a; border-color: #fff; }
+  .hero .btn.primary:hover { background: #e0e0e0; }
+
+  /* KV dots */
+  .hero-dots {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+  .hero-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .hero-dot.active {
+    background: #fff;
+    width: 32px;
+    border-radius: 6px;
+  }
+  .hero-dot:hover:not(.active) { background: rgba(255,255,255,0.55); }
+
+  /* ====================================================================
+     ZONE 2 · ROI — 3-column with icons
+     ==================================================================== */
+  .roi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 48px;
+  }
+  .roi-card {
+    background: #fff;
+    border: 1px solid var(--wf-border);
+    padding: 48px 28px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .roi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  }
+  .roi-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 24px;
+    background: var(--wf-surface-alt);
+    border: 1px dashed var(--wf-border-strong);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--wf-text-muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .roi-icon::before {
+    content: "ICON";
+    font-weight: 600;
+  }
+  .roi-stat {
+    font-size: 68px;
+    font-weight: 800;
+    color: var(--wf-text);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: -2.5px;
+  }
+  .roi-label {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--wf-text);
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+  .roi-desc {
+    font-size: 13.5px;
+    color: var(--wf-text-muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* ====================================================================
+     ZONE 3 · 9-card grid
+     ==================================================================== */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .scenario-card {
+    background: #fff;
+    border: 1px solid var(--wf-border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .scenario-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  }
+  .scenario-card .wf-img {
+    min-height: 180px;
+    border: none;
+    border-bottom: 1px solid var(--wf-border);
+  }
+  .scenario-card-body { padding: 22px 24px 26px; }
+  .scenario-tag {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--wf-text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .scenario-desc {
+    font-size: 13.5px;
+    color: var(--wf-text-muted);
+    line-height: 1.55;
+  }
+
+  /* ====================================================================
+     ZONE 4 · Trust (Case Studies + Videos) — CMS feed
+     ==================================================================== */
+  .subblock { margin-bottom: 72px; }
+  .subblock:last-child { margin-bottom: 0; }
+
+  .carousel-row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    margin-top: 40px;
+  }
+  .carousel-row::-webkit-scrollbar { height: 6px; }
+  .carousel-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+  .case-card {
+    min-width: 320px;
+    max-width: 320px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid var(--wf-border);
+  }
+  .case-card .wf-img {
+    min-height: 180px;
+    border: none;
+    border-bottom: 1px solid var(--wf-border);
+  }
+  .case-card-body { padding: 20px 22px 24px; }
+  .case-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    min-height: 72px;
+  }
+  .case-card p {
+    font-size: 12.5px;
+    color: var(--wf-text-muted);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .case-card .btn { margin-top: 0; padding: 8px 16px; font-size: 12px; }
+
+  /* Video pair */
+  .video-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .video-card {
+    background: #fff;
+    border: 1px solid var(--wf-border);
+    overflow: hidden;
+  }
+  .video-thumb {
+    position: relative;
+    min-height: 240px;
+    background: repeating-linear-gradient(45deg, var(--wf-img-a),
+                var(--wf-img-a) 8px, var(--wf-img-b) 8px, var(--wf-img-b) 16px);
+    border-bottom: 1px solid var(--wf-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .video-thumb .play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: transform 0.2s;
+  }
+  .video-card:hover .play { transform: translate(-50%, -50%) scale(1.08); }
+  .video-body { padding: 22px 24px 26px; }
+  .video-body h3 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .video-body p {
+    font-size: 13px;
+    color: var(--wf-text-muted);
+    line-height: 1.6;
+  }
+
+  /* CMS badge */
+  .cms-badge {
+    display: inline-block;
+    background: #eee;
+    color: #555;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 3px 8px;
+    border: 1px dashed #aaa;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* ====================================================================
+     ZONE 5 · Conversion (single CTA)
+     ==================================================================== */
+  .conversion-block { text-align: center; padding: 32px 0; }
+  .conversion-block .section-lead { margin: 0 auto 28px; }
+
+  /* ====================================================================
+     FAQ · Accordion
+     ==================================================================== */
+  .faq-container { max-width: 900px; margin: 0 auto; }
+  .acc-item {
+    background: #fff;
+    border: 1px solid var(--wf-border);
+    border-bottom: none;
+  }
+  .acc-item:last-child { border-bottom: 1px solid var(--wf-border); }
+  .acc-q {
+    padding: 22px 26px;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--wf-text);
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .acc-q:hover { background: #fafafa; }
+  .acc-q::after {
+    content: "+";
+    color: #888;
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1;
+    margin-left: 20px;
+    flex-shrink: 0;
+  }
+  .acc-a {
+    padding: 0 26px 22px;
+    font-size: 14px;
+    color: #555;
+    display: none;
+    line-height: 1.75;
+  }
+  .acc-item.open .acc-q::after { content: "−"; }
+  .acc-item.open .acc-a { display: block; }
+
+  /* ====================================================================
+     MODAL (Zone 5 Simple Form placeholder)
+     ==================================================================== */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: #fff;
+    max-width: 560px;
+    width: 100%;
+    padding: 40px;
+    position: relative;
+    border-radius: 2px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--wf-text-muted);
+    margin-bottom: 10px;
+  }
+  .modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .modal-placeholder {
+    border: 2px dashed #bbb;
+    background: #f4f4f4;
+    padding: 28px 20px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.65;
+  }
+  .modal-placeholder strong {
+    display: block;
+    color: #555;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-style: normal;
+  }
+
+  /* ====================================================================
+     ADVANTECH FOOTER — based on advantech.com structure
+     ==================================================================== */
+  .adv-help {
+    background: #fff;
+    border-top: 1px solid var(--wf-border);
+    padding: 48px 0;
+  }
+  .adv-help-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 36px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .adv-help h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-right: 20px;
+  }
+  .adv-help-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--wf-text-muted);
+  }
+  .adv-help-item::before {
+    content: "";
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 1px solid var(--wf-border-strong);
+    border-radius: 50%;
+  }
+  .adv-help-item a { color: var(--wf-text); font-weight: 500; }
+  .adv-help-item a:hover { text-decoration: underline; }
+
+  .adv-footer {
+    background: #1a1a1a;
+    color: #bbb;
+    padding: 48px 0 24px;
+    font-size: 12.5px;
+  }
+  .adv-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .adv-footer-top {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #333;
+  }
+  .adv-footer-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .adv-footer-logo::before {
+    content: "";
+    width: 28px; height: 28px;
+    background: #fff;
+    border-radius: 2px;
+  }
+  .adv-footer-nav {
+    display: flex;
+    gap: 28px;
+    flex: 1;
+  }
+  .adv-footer-nav a { color: #bbb; }
+  .adv-footer-nav a:hover { color: #fff; }
+
+  .adv-footer-bottom {
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 24px;
+    font-size: 11.5px;
+    color: #888;
+  }
+  .adv-footer-bottom-links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .adv-footer-bottom-links a { color: #888; }
+  .adv-footer-bottom-links a:hover { color: #bbb; }
+
+  /* ====================================================================
+     Responsive
+     ==================================================================== */
+  @media (max-width: 960px) {
+    .adv-header-inner { flex-wrap: wrap; gap: 16px; }
+    .adv-nav { order: 3; width: 100%; overflow-x: auto; padding-bottom: 4px; }
+    .roi-grid, .scenario-grid { grid-template-columns: repeat(2, 1fr); }
+    .video-pair { grid-template-columns: 1fr; }
+    .hero-headline { font-size: 30px; }
+    .section { padding: 56px 0; }
+    .section-title { font-size: 26px; }
+  }
+  @media (max-width: 600px) {
+    .roi-grid, .scenario-grid { grid-template-columns: 1fr; }
+    .hero-headline { font-size: 24px; }
+    .hero-frame { padding: 60px 0 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     ADVANTECH HEADER
+     ==================================================================== -->
+<div class="adv-util-bar">
+  <div class="adv-util-inner">
+    <a href="#">Register / Log In</a>
+    <a href="#">MyAdvantech</a>
+    <a href="#">Corporate Site</a>
+  </div>
+</div>
+<header class="adv-header">
+  <div class="adv-header-inner">
+    <a href="#" class="adv-logo">Advantech</a>
+    <nav class="adv-nav">
+      <a href="#">Products</a>
+      <a href="#" class="active">Solutions</a>
+      <a href="#">Services</a>
+      <a href="#">Partners</a>
+      <a href="#">Support</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="adv-header-actions">
+      <span class="icon-btn">⌕</span>
+      <span class="icon-btn">☰</span>
+    </div>
+  </div>
+</header>
+<div class="adv-breadcrumb">
+  <div class="adv-breadcrumb-inner">
+    <a href="#">Home</a>
+    <span class="sep">›</span>
+    <a href="#">Solutions</a>
+    <span class="sep">›</span>
+    <span class="current">Rugged Vehicle Computing</span>
+  </div>
+</div>
+
+<!-- ====================================================================
+     AI SNAPSHOT (Hidden aside for AI Indexing)
+     ==================================================================== -->
+<aside aria-label="AI Snapshot" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+  Advantech Rugged Vehicle Computing (TREK) provides industrial-grade in-vehicle AI and computing
+  solutions certified with MIL-STD-810G, ISO 7637-2, E-Mark, and EN 50155. Our portfolio includes
+  rugged tablets, vehicle-mount terminals (VMT), dual-system edge AI platforms, and AI-enabled
+  fleet management systems. TREK solutions are deployed across nine industry-specific contexts —
+  intelligent warehouse and logistics, smart port and container terminal operations, autonomous
+  industrial vehicles, commercial fleet management, public transportation and iBus, heavy-duty
+  machinery and intelligent mining, mobile computing for field service, mission-critical defense
+  mobility, and custom in-vehicle design-to-order services. Backed by Advantech's long-term supply
+  commitment and global FAE network, these platforms reduce unplanned downtime, improve fleet
+  safety, and lower total cost of ownership for fleet operators, system integrators, and
+  public-sector buyers worldwide.
+</aside>
+
+<main>
+
+  <!-- ================================================================
+       ZONE 1 · HERO (KV Banner · 4-frame rotator)
+       ================================================================ -->
+  <section class="hero" id="zone-1">
+    <div class="hero-wrap">
+
+      <!-- Banner 1 -->
+      <div class="hero-frame active" data-frame="1">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Rugged Vehicle Computing</span>
+          <h1 class="hero-headline">Ensuring Integrity with Intelligent Cold Chain Resilience</h1>
+          <p class="hero-lead">
+            Secure your temperature-sensitive assets with 24/7 real-time sensing and automated
+            alerts, ensuring global compliance and zero-spoilage logistics.
+          </p>
+          <div>
+            <a class="btn primary">Explore Cold Chain Solutions</a>
+            <a class="btn">Contact an Expert</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner 2 -->
+      <div class="hero-frame" data-frame="2">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Rugged Vehicle Computing</span>
+          <h1 class="hero-headline">Accelerating Fulfillment through Seamless Warehouse Automation</h1>
+          <p class="hero-lead">
+            Eliminate lead-time bottlenecks and manual errors with high-performance vehicle-mount
+            terminals designed for peak operational efficiency.
+          </p>
+          <div>
+            <a class="btn primary">Explore Warehouse Solutions</a>
+            <a class="btn">Contact an Expert</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner 3 -->
+      <div class="hero-frame" data-frame="3">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Rugged Vehicle Computing</span>
+          <h1 class="hero-headline">Empowering Mobile Workforces in Harsh Environments</h1>
+          <p class="hero-lead">
+            Maximize on-site productivity with MIL-STD certified tablets and modular peripherals,
+            connecting your field teams to real-time intelligence anywhere.
+          </p>
+          <div>
+            <a class="btn primary">Explore Mobile Computing</a>
+            <a class="btn">Contact an Expert</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner 4 -->
+      <div class="hero-frame" data-frame="4">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Rugged Vehicle Computing</span>
+          <h1 class="hero-headline">AI-Driven Safety for Mission-Critical Fleet Excellence</h1>
+          <p class="hero-lead">
+            Leverage AI-powered behavior monitoring and advanced ADAS to protect drivers and
+            assets, reducing liability while optimizing fleet continuity.
+          </p>
+          <div>
+            <a class="btn primary">Explore Fleet AI Solutions</a>
+            <a class="btn">Contact an Expert</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dots -->
+      <div class="hero-dots">
+        <span class="hero-dot active" data-target="1"></span>
+        <span class="hero-dot" data-target="2"></span>
+        <span class="hero-dot" data-target="3"></span>
+        <span class="hero-dot" data-target="4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       ZONE 2 · STRATEGIC IMPACT & OPERATIONAL ROI
+       ================================================================ -->
+  <section class="section alt" id="zone-2">
+    <div class="section-inner">
+      <div style="text-align:center;">
+        <div class="section-eyebrow">Overview</div>
+        <h2 class="section-title">Unlock Operational Value with Rugged Edge Intelligence</h2>
+        <p class="section-lead" style="margin: 0 auto;">
+          Across logistics, transit, mining, and mission-critical fleets, Advantech TREK platforms
+          deliver measurable returns that matter to operations leadership.
+        </p>
+      </div>
+
+      <div class="roi-grid">
+        <div class="roi-card">
+          <div class="roi-icon"></div>
+          <div class="roi-stat">40%</div>
+          <div class="roi-label">Reduction in Unplanned Downtime</div>
+          <p class="roi-desc">
+            MIL-STD-810G certified platforms survive vibration, shock, and thermal extremes that
+            end consumer-grade hardware early — keeping vehicles and assets on the job.
+          </p>
+        </div>
+
+        <div class="roi-card">
+          <div class="roi-icon"></div>
+          <div class="roi-stat">25%</div>
+          <div class="roi-label">Improvement in Fleet Safety</div>
+          <p class="roi-desc">
+            AI-powered driver monitoring and ADAS spot fatigue, distraction, and collision risk
+            in real time — reducing at-fault incidents and insurance exposure.
+          </p>
+        </div>
+
+        <div class="roi-card">
+          <div class="roi-icon"></div>
+          <div class="roi-stat">20%</div>
+          <div class="roi-label">Lower Total Cost of Ownership</div>
+          <p class="roi-desc">
+            Long-term supply commitments and industrial-grade components cut replacement cycles
+            and integration rework — lowering amortized 5-year costs.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       ZONE 3 · INDUSTRY-SPECIFIC APPLICATION CLUSTERS
+       ================================================================ -->
+  <section class="section" id="zone-3">
+    <div class="section-inner">
+      <div class="section-eyebrow">Solutions</div>
+      <h2 class="section-title">See How Industries Are Using Advantech Rugged Vehicle Computing</h2>
+      <p class="section-lead">
+        From warehouse floors to mine sites, container terminals to transit fleets — nine
+        industry-specific application clusters covered by Advantech's TREK, DLT, AIM, and REX
+        product families.
+      </p>
+
+      <div class="scenario-grid">
+        <div class="scenario-card">
+          <div class="wf-img">Warehouse-to-road continuity scene</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Smart Distribution &amp; Fulfillment</div>
+            <p class="scenario-desc">Streamlining last-mile delivery visibility.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Container terminal scene</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Container Moves, Uninterrupted</div>
+            <p class="scenario-desc">Keeping yards running through salt air and 24/7 shifts.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Autonomous container tractor / AGV in operation</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Autonomous Operations, Production-Ready</div>
+            <p class="scenario-desc">On-vehicle AI for obstacle avoidance and route planning.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Fleet vehicle — utility, bus, emergency, or cold chain</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Connected Fleets, Smarter Operations</div>
+            <p class="scenario-desc">In-vehicle edge AI for fleet efficiency and safety.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Public bus with driver monitoring</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Safer Buses, Smarter Transit</div>
+            <p class="scenario-desc">Public transit safety with AI, 5G, and V2X.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Haul truck / dozer / tunnel machinery on mine site</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Intelligent Mine Sites, End-to-End</div>
+            <p class="scenario-desc">Data logging, fault prediction, and autonomous driving.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Field technician with rugged tablet</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Field Service, In Real Time</div>
+            <p class="scenario-desc">Industrial tablets connecting field teams anywhere.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Military / emergency response vehicle</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Defense Mobility, Mission Ready</div>
+            <p class="scenario-desc">Rugged edge AI for defense and emergency response fleets.</p>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="wf-img">Engineering team with custom prototype</div>
+          <div class="scenario-card-body">
+            <div class="scenario-tag">Your Platform, Custom-Built</div>
+            <p class="scenario-desc">Custom in-vehicle solutions built to MIL-STD-810G, 5M3, IP69K.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       ZONE 4 · TRUST (Case Studies + Videos · CMS feed)
+       ================================================================ -->
+  <section class="section alt" id="zone-4">
+    <div class="section-inner">
+
+      <!-- Sub-block A: Case Studies -->
+      <div class="subblock">
+        <div class="section-eyebrow">Case Studies</div>
+        <h2 class="section-title">Trusted by Global Ports, Mining Giants, and Emergency Fleets</h2>
+        <p class="section-lead">
+          From global ports to mining giants and emergency service networks — real deployments
+          in the world's toughest operating conditions.
+        </p>
+
+        <div class="carousel-row">
+
+          <div class="case-card">
+            <div class="wf-img">Case Image · Tianjin Port</div>
+            <div class="case-card-body">
+              <span class="cms-badge">CMS · Feed Item 1</span>
+              <h3>Advantech's Rugged DLT VMTs with DeviceOn Enable Reliable Operation at the Tianjin Port</h3>
+              <p>Advantech's durable VMTs with DeviceOn enhance efficiency and remote monitoring at Tianjin Port.</p>
+              <a class="btn">View More</a>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="wf-img">Case Image · Port of Salalah</div>
+            <div class="case-card-body">
+              <span class="cms-badge">CMS · Feed Item 2</span>
+              <h3>Improving Operational Efficiency at the Port of Salalah with Advantech's DLT Series</h3>
+              <p>The Port of Salalah adopted Advantech's DLT series to maximize productivity and reduce maintenance costs.</p>
+              <a class="btn">View More</a>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="wf-img">Case Image · Komatsu</div>
+            <div class="case-card-body">
+              <span class="cms-badge">CMS · Feed Item 3</span>
+              <h3>Komatsu Partners with Advantech for AIoT Heavy Duty Construction Equipment</h3>
+              <p>Komatsu embraces smart construction with autonomous heavy equipment powered by Advantech's in-vehicle computers.</p>
+              <a class="btn">View More</a>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="wf-img">Case Image · Handsfree Group</div>
+            <div class="case-card-body">
+              <span class="cms-badge">CMS · Feed Item 4</span>
+              <h3>Collaboration between Handsfree Group and Advantech Stretches the Boundaries of The Emergency Services</h3>
+              <p>Handsfree Group selected Advantech as a key supplier for the UK Emergency Services Network (ESN).</p>
+              <a class="btn">View More</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sub-block B: Video Evidence -->
+      <div class="subblock">
+        <div class="section-eyebrow">Video Evidence</div>
+        <h2 class="section-title">See It Working in the Field</h2>
+        <p class="section-lead">
+          Real test footage and live deployment demonstrations — showing exactly how TREK
+          platforms behave under shock, vibration, and real-world operating conditions.
+        </p>
+
+        <div class="video-pair">
+
+          <div class="video-card">
+            <div class="video-thumb">
+              Video Thumbnail · TREK-50N
+              <div class="play">▶</div>
+            </div>
+            <div class="video-body">
+              <span class="cms-badge">CMS · Feed Item 1</span>
+              <h3>TREK-50N Rugged AI Computing Platform for Industrial Autonomous Solutions</h3>
+              <p>Meet the TREK-50N — a rugged NVIDIA® Jetson Orin NX™ platform for autonomous industrial vehicles. Delivers real-time AI and sensor fusion for mining, ports, and construction.</p>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <div class="video-thumb">
+              Video Thumbnail · TREK Show Time VPM
+              <div class="play">▶</div>
+            </div>
+            <div class="video-body">
+              <span class="cms-badge">CMS · Feed Item 2</span>
+              <h3>【TREK Show Time】Vehicle Power Management Part 2</h3>
+              <p>How does TREK's Vehicle Power Management (VPM) technology enhance operational efficiency in vehicle applications?</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================
+       ZONE 5 · CONVERSION (Single CTA · A-Plan)
+       ================================================================ -->
+  <section class="section" id="zone-5">
+    <div class="section-inner">
+      <div class="conversion-block">
+        <div class="section-eyebrow">Contact Us</div>
+        <h2 class="section-title">Lead with TREK — Talk to Our Experts</h2>
+        <p class="section-lead">
+          Whether you're evaluating your first deployment or scaling an existing fleet, Advantech
+          engineers help you specify, validate, and deploy with confidence.
+        </p>
+        <a class="btn primary large" id="open-modal-btn">Consult a Vehicle Computing Expert →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       FAQ · Accordion
+       ================================================================ -->
+  <section class="section alt" id="faq">
+    <div class="section-inner">
+      <div class="faq-container">
+        <div style="text-align:center;">
+          <div class="section-eyebrow">FAQ</div>
+          <h2 class="section-title">Rugged Vehicle Computing Frequently Asked Questions</h2>
+          <p class="section-lead" style="margin:0 auto 40px;">
+            Common questions from fleet operators, procurement teams, and system integrators —
+            pre-answered for fast reference and AI citation.
+          </p>
+        </div>
+
+        <div class="acc-item open">
+          <div class="acc-q">How to select the right rugged vehicle computer for cold chain logistics?</div>
+          <div class="acc-a">
+            Cold chain deployments require three specific certifications — MIL-STD-810G for
+            vibration and shock, IP-rated enclosures for moisture ingress protection, and operating
+            temperature ranges extending to −30°C or lower. Advantech TREK platforms for cold chain
+            include integrated temperature sensor inputs, 4G/5G redundant connectivity for continuous
+            telemetry, and pre-validated integration paths with major WMS and TMS platforms.
+            Selection should start with your lowest operating temperature and worst-case vibration
+            profile, then match certifications accordingly.
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-q">What is the best vehicle-mount terminal for warehouse forklift operations?</div>
+          <div class="acc-a">
+            The best VMT for warehouse forklift operations combines sunlight-readable displays,
+            glove-compatible touchscreens, and shock-resistant mounting hardware rated for constant
+            vibration. Advantech's VMT series meets ANSI B56.11 forklift mounting standards and
+            supports both legacy serial and modern Ethernet WMS protocols through a single terminal.
+            Screen size selection depends on workflow complexity — 10-inch for pick-and-pack,
+            12-inch for complex receiving workflows.
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-q">What certifications do Advantech TREK platforms hold for public transit and rail?</div>
+          <div class="acc-a">
+            Advantech TREK in-vehicle platforms designated for public transit and rail carry
+            EN 50155 compliance for rolling stock electronics, E-Mark approval for automotive
+            electromagnetic compatibility, and ISO 7637-2 for in-vehicle voltage transient immunity.
+            Specific certifications vary by SKU — consult the Advantech selection guide or engage
+            a regional FAE for verification on your target deployment profile.
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-q">How does AI-powered driver monitoring reduce fleet liability and insurance exposure?</div>
+          <div class="acc-a">
+            AI-powered driver monitoring systems (DMS) use in-cab cameras and edge inference to
+            detect fatigue, distraction, and policy violations in real time. By issuing in-cab alerts
+            and logging verifiable incident data with timestamps, DMS platforms deliver documented
+            due-diligence evidence that reduces insurance exposure and at-fault liability in
+            commercial fleet operations. Advantech TREK DMS platforms run inference locally on the
+            vehicle, so alerting continues even when cellular connectivity is lost.
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-q">What is the typical supply lifecycle and TCO profile for Advantech TREK platforms versus consumer-grade tablets?</div>
+          <div class="acc-a">
+            Advantech TREK products are built on industrial-grade components with long-term supply
+            commitments — typically spanning multiple years beyond consumer-grade alternatives.
+            This supply longevity, combined with substantially lower failure rates in field
+            conditions, lowers the amortized 5-year total cost of ownership compared to consumer
+            tablets that require replacement every 18–24 months. Procurement teams should model
+            TCO across replacement cycles, integration labor, and downtime cost — not just unit price.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ====================================================================
+     ZONE 5 MODAL
+     ==================================================================== -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+    <div class="modal-eyebrow">Modal · Simple Form</div>
+    <div class="modal-title">Consult a Vehicle Computing Expert</div>
+    <div class="modal-placeholder">
+      <strong>Marcom content pending</strong>
+      Modal Title, Description, Form Fields (Name / Company / Email / Deployment Scope / Message),
+      Submit Button text, and post-submit success message will be provided by Marcom.
+      <br><br>
+      Wireframe shows container interaction only.
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     ADVANTECH FOOTER
+     ==================================================================== -->
+<section class="adv-help">
+  <div class="adv-help-inner">
+    <h3>How Can We Help?</h3>
+    <div class="adv-help-item"><a href="#">Buy Online</a></div>
+    <div class="adv-help-item"><a href="#">Support</a></div>
+    <div class="adv-help-item"><a href="#">Live Chat</a></div>
+    <div class="adv-help-item"><a href="tel:1-888-576-9668">1-888-576-9668</a></div>
+  </div>
+</section>
+
+<footer class="adv-footer">
+  <div class="adv-footer-inner">
+    <div class="adv-footer-top">
+      <a class="adv-footer-logo">Advantech</a>
+      <div class="adv-footer-nav">
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Corporate Citizenship (ESG)</a>
+      </div>
+    </div>
+    <div class="adv-footer-bottom">
+      <span>© 1983-2026 Advantech Co., Ltd.</span>
+      <div class="adv-footer-bottom-links">
+        <a href="#">Site Map</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Do Not Sell My Personal Information</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ===== Accordion =====
+  document.querySelectorAll('.acc-q').forEach(q => {
+    q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+  });
+
+  // ===== KV Banner rotator =====
+  const dots = document.querySelectorAll('.hero-dot');
+  const frames = document.querySelectorAll('.hero-frame');
+  function switchFrame(target) {
+    dots.forEach(d => d.classList.remove('active'));
+    frames.forEach(f => f.classList.remove('active'));
+    document.querySelector('.hero-dot[data-target="' + target + '"]').classList.add('active');
+    document.querySelector('.hero-frame[data-frame="' + target + '"]').classList.add('active');
+  }
+  dots.forEach(d => d.addEventListener('click', () => switchFrame(d.getAttribute('data-target'))));
+  let idx = 1;
+  let timer = setInterval(() => {
+    idx = (idx % 4) + 1;
+    switchFrame(String(idx));
+  }, 6000);
+  const heroWrap = document.querySelector('.hero-wrap');
+  if (heroWrap) {
+    heroWrap.addEventListener('mouseenter', () => clearInterval(timer));
+    heroWrap.addEventListener('mouseleave', () => {
+      timer = setInterval(() => {
+        idx = (idx % 4) + 1;
+        switchFrame(String(idx));
+      }, 6000);
+    });
+  }
+
+  // ===== Modal =====
+  const bd = document.getElementById('modal-backdrop');
+  document.getElementById('open-modal-btn').addEventListener('click', e => {
+    e.preventDefault();
+    bd.classList.add('open');
+  });
+  document.getElementById('modal-close-btn').addEventListener('click', () => bd.classList.remove('open'));
+  bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('open'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') bd.classList.remove('open'); });
+</script>
+
+</body>
+</html>
