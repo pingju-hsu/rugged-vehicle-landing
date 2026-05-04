@@ -367,6 +367,35 @@
   }
   .ui-navbar__item--divider a { display: none; }
 
+  /* ============= BELT NAV · WHITE STYLE (screenshot reference) ============= */
+  .ui-navbar.ui-navbar__secondary-wrapper {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid var(--color-grey-200);
+  }
+  .ui-navbar.ui-navbar__secondary-wrapper .ui-navbar__list .ui-navbar__item {
+    margin-right: 0;
+    padding: 0 var(--space-xs);
+  }
+  /* Vertical separator after each item */
+  .ui-navbar.ui-navbar__secondary-wrapper .ui-navbar__list .ui-navbar__item::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 22px;
+    background: var(--color-grey-300);
+  }
+  .ui-navbar.ui-navbar__secondary-wrapper .ui-navbar__list .ui-navbar__item:last-child::after {
+    display: none;
+  }
+  /* Solid blue CTA button */
+  .ui-navbar__secondary-wrapper .ui-navbar__cta .ui-btn--primary {
+    background: #456de5;
+    border-color: transparent;
+  }
+
   /* ============= KV BANNER · LIGHT THEME OVERRIDE ============
      Toggled via .kv-banner__slide--light (replaces --dark) by tweak. */
   .kv-banner__slide--light {
