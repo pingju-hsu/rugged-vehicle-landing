@@ -647,6 +647,23 @@
     width: 100%;
     overflow: hidden;
   }
+
+  /* ============= BELT NAV · STICKY ============= */
+  #belt-nav.is-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+  }
+  /* Spacer to prevent content jump when belt goes sticky */
+  #belt-nav-spacer {
+    display: none;
+  }
+  #belt-nav-spacer.is-visible {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -781,7 +798,7 @@
        Secondary navbar (子網站 — Rugged Vehicle Computing)
        Moved below KV banner; merged with primary site sections.
   ============================================================ -->
-  <div class="ui-navbar ui-navbar__secondary-wrapper">
+  <div id="belt-nav" class="ui-navbar ui-navbar__secondary-wrapper">
     <div class="ui-navbar__sitename">
       <div class="container-limited"><p>Rugged Vehicle Computing</p></div>
     </div>
@@ -789,16 +806,11 @@
       <nav class="ui-navbar__nav">
         <div class="ui-navbar__collapse">
           <ul class="ui-navbar__list">
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">Products</a></li>
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">Solutions</a></li>
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">Services</a></li>
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">Partners</a></li>
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">Support</a></li>
-            <li class="ui-navbar__item"><a href="#" class="ui-navbar__link">About Us</a></li>
-            <li class="ui-navbar__item ui-navbar__item--divider" aria-hidden="true"></li>
             <li class="ui-navbar__item active"><a href="#zone-overview" class="ui-navbar__link">Overview</a></li>
             <li class="ui-navbar__item"><a href="#zone-solutions" class="ui-navbar__link">Solutions</a></li>
+            <li class="ui-navbar__item"><a href="#zone-products" class="ui-navbar__link">Product</a></li>
             <li class="ui-navbar__item"><a href="#zone-case-studies" class="ui-navbar__link">Case Studies</a></li>
+            <li class="ui-navbar__item"><a href="#zone-faq" class="ui-navbar__link">FAQ</a></li>
           </ul>
           <div class="ui-navbar__cta">
             <a href="#zone-contact" class="ui-btn ui-btn--primary">Contact an Expert</a>
@@ -1003,7 +1015,7 @@
   <!-- ============================================================
        4 · TABS — Product Families
   ============================================================ -->
-  <section class="container-full pg-section pg-section--alt">
+  <section id="zone-products" class="container-full pg-section pg-section--alt">
     <div class="container-limited">
       <div class="row pg-center" style="margin-bottom: var(--space-md);">
         <div class="ui-section-title">
@@ -1203,7 +1215,7 @@
   <!-- ============================================================
        7 · FAQ · ACCORDION
   ============================================================ -->
-  <section class="container-full pg-section pg-section--alt">
+  <section id="zone-faq" class="container-full pg-section pg-section--alt">
     <div class="container-limited">
       <div class="row pg-center" style="margin-bottom: var(--space-md);">
         <div class="ui-section-title">
@@ -1333,6 +1345,46 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 <script>
 (function () {
+  /* ---------------- Belt Nav Sticky ---------------- */
+  const belt = document.getElementById('belt-nav');
+  if (belt) {
+    const spacer = document.createElement('div');
+    spacer.id = 'belt-nav-spacer';
+    belt.parentNode.insertBefore(spacer, belt.nextSibling);
+
+    const makeSticky = () => {
+      const beltTop = belt.getBoundingClientRect().top + window.scrollY;
+      const onSticky = () => {
+        spacer.style.height = belt.offsetHeight + 'px';
+        belt.classList.add('is-sticky');
+        spacer.classList.add('is-visible');
+      };
+      const offSticky = () => {
+        belt.classList.remove('is-sticky');
+        spacer.classList.remove('is-visible');
+      };
+      window.addEventListener('scroll', () => {
+        window.scrollY >= beltTop ? onSticky() : offSticky();
+      }, { passive: true });
+    };
+    makeSticky();
+
+    /* ---------- Scroll Spy: highlight active belt item ---------- */
+    const sections = ['zone-overview','zone-solutions','zone-products','zone-case-studies','zone-faq','zone-contact']
+      .map(id => document.getElementById(id)).filter(Boolean);
+    const links = belt.querySelectorAll('.ui-navbar__link');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.closest('.ui-navbar__item').classList.remove('active'));
+          const active = belt.querySelector(`.ui-navbar__link[href="#${entry.target.id}"]`);
+          if (active) active.closest('.ui-navbar__item').classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    sections.forEach(s => observer.observe(s));
+  }
+
   /* ---------------- KV Banner ---------------- */
   if (window.Swiper && document.querySelector('.kv-banner-swiper')) {
     const kvSwiper = new Swiper('.kv-banner-swiper', {
